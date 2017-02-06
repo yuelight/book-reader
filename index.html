@@ -351,10 +351,12 @@
 							UIcallback && UIcallback(data);
 						});
 					});
-				}
+				};
+
 				var getFictionInfo = function(cb) {
 					$.getJSON('data/chapter.json', function(data) {
-						Chapter_id = data.chapters[1].chapter_id;
+						Chapter_id = Util.storageGetter('last_chapter_id') ||
+							data.chapters[1].chapter_id;
 						ChapterTotal = data.chapters.length;
 						cb && cb();
 					});
@@ -370,6 +372,7 @@
 						}
 					});
 				};
+
 				var prevChapter = function(UIcallback) {
 					Chapter_id = parseInt(Chapter_id, 10);
 					Chapter_id--;
@@ -377,6 +380,8 @@
 						Chapter_id = 1;
 					}
 					getCurChapterContent(Chapter_id, UIcallback);
+
+					Util.storageSetter('last_chapter_id', Chapter_id);
 				};
 				var nextChapter = function(UIcallback) {
 					Chapter_id = parseInt(Chapter_id, 10);
@@ -385,6 +390,8 @@
 						Chapter_id = 4;
 					}
 					getCurChapterContent(Chapter_id, UIcallback);
+
+					Util.storageSetter('last_chapter_id', Chapter_id);
 				};
 				return {
 					init: init,
@@ -495,13 +502,13 @@
 				});
 
 				$('#prev-button').click(function() {
-					readerModel.prevChapter(function (data) {
+					readerModel.prevChapter(function(data) {
 						readerUI(data)
 					});
 					Dom.body.scrollTop(0);
 				});
 				$('#next-button').click(function() {
-					readerModel.nextChapter(function (data) {
+					readerModel.nextChapter(function(data) {
 						readerUI(data);
 					});
 					Dom.body.scrollTop(0);
